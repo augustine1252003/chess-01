@@ -6,11 +6,18 @@ pygame.init()
 #initial variables
 WIDTH = 1000
 HEIGHT = 900
+MOVE_DOT_COLOR = ('#116D6E')
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 pygame.display.set_caption('Chess')
 font = pygame.font.Font('freesansbold.ttf', 20)
 big_font = pygame.font.Font('freesansbold.ttf', 50)
 medium_font = pygame.font.Font('freesansbold.ttf', 35)
+lighter_purple = ('#c08bf7')
+light_purple = ('#9235f0')
+dark_purple = ('#7022bf')
+darkest_purple = ('#340761')
+white = ('#ffffff')
+black = ('#000000')
 timer = pygame.time.Clock()
 fps = 60
 
@@ -32,51 +39,53 @@ selection = 100
 valid_moves = []
 
 #load in game pieces as images
-white_king = pygame.image.load('assets/pieces/white king.png')
+white_king = pygame.image.load('assets/pieces/wK.png')
 white_king = pygame.transform.scale(white_king, (80, 80))
 white_king_small = pygame.transform.scale(white_king, (45, 45))
+# don't think we need a small king (not capturable)
 
-white_queen = pygame.image.load('assets/pieces/white queen.png')
+white_queen = pygame.image.load('assets/pieces/wQ.png')
 white_queen = pygame.transform.scale(white_queen, (80, 80))
 white_queen_small = pygame.transform.scale(white_queen, (45, 45))
 
-white_rook = pygame.image.load('assets/pieces/white rook.png')
+white_rook = pygame.image.load('assets/pieces/wR.png')
 white_rook = pygame.transform.scale(white_rook, (80, 80))
 white_rook_small = pygame.transform.scale(white_rook, (45, 45))
 
-white_bishop = pygame.image.load('assets/pieces/white bishop.png')
+white_bishop = pygame.image.load('assets/pieces/wB.png')
 white_bishop = pygame.transform.scale(white_bishop, (80, 80))
 white_bishop_small = pygame.transform.scale(white_bishop, (45, 45))
 
-white_knight = pygame.image.load('assets/pieces/white knight.png')
+white_knight = pygame.image.load('assets/pieces/wN.png')
 white_knight = pygame.transform.scale(white_knight, (80, 80))
 white_knight_small = pygame.transform.scale(white_knight, (45, 45))
 
-white_pawn = pygame.image.load('assets/pieces/white pawn.png')
+white_pawn = pygame.image.load('assets/pieces/wp.png')
 white_pawn = pygame.transform.scale(white_pawn, (65, 65))
 white_pawn_small = pygame.transform.scale(white_pawn, (45, 45))
 
-black_king = pygame.image.load('assets/pieces/black king.png')
+black_king = pygame.image.load('assets/pieces/bK.png')
 black_king = pygame.transform.scale(black_king, (80, 80))
 black_king_small = pygame.transform.scale(black_king, (45, 45))
+# don't think we need a small king (not capturable)
 
-black_queen = pygame.image.load('assets/pieces/black queen.png')
+black_queen = pygame.image.load('assets/pieces/bQ.png')
 black_queen = pygame.transform.scale(black_queen, (80, 80))
 black_queen_small = pygame.transform.scale(black_queen, (45, 45))
 
-black_rook = pygame.image.load('assets/pieces/black rook.png')
+black_rook = pygame.image.load('assets/pieces/bR.png')
 black_rook = pygame.transform.scale(black_rook, (80, 80))
 black_rook_small = pygame.transform.scale(black_rook, (45, 45))
 
-black_bishop = pygame.image.load('assets/pieces/black bishop.png')
+black_bishop = pygame.image.load('assets/pieces/bB.png')
 black_bishop = pygame.transform.scale(black_bishop, (80, 80))
 black_bishop_small = pygame.transform.scale(black_bishop, (45, 45))
 
-black_knight = pygame.image.load('assets/pieces/black knight.png')
+black_knight = pygame.image.load('assets/pieces/bN.png')
 black_knight = pygame.transform.scale(black_knight, (80, 80))
 black_knight_small = pygame.transform.scale(black_knight, (45, 45))
 
-black_pawn = pygame.image.load('assets/pieces/black pawn.png')
+black_pawn = pygame.image.load('assets/pieces/bp.png')
 black_pawn = pygame.transform.scale(black_pawn, (65, 65))
 black_pawn_small = pygame.transform.scale(black_pawn, (45, 45))
 
@@ -97,24 +106,24 @@ def draw_board():
         column = i % 4
         row = i // 4
         if row % 2 == 0:
-            pygame.draw.rect(screen, 'light gray', [600 - (column * 200), row * 100, 100, 100])
+            pygame.draw.rect(screen, lighter_purple, [600 - (column * 200), row * 100, 100, 100])
         else:
-            pygame.draw.rect(screen, 'light gray', [700 - (column * 200), row * 100, 100, 100])
+            pygame.draw.rect(screen, lighter_purple, [700 - (column * 200), row * 100, 100, 100])
         #draw lines
         for i in range(9):
-            pygame.draw.line(screen, 'black', (0, 100 * i), (800, 100 * i), 2)
-            pygame.draw.line(screen, 'black', (100 * i, 0), (100 * i, 800), 2)
+            pygame.draw.line(screen, darkest_purple, (0, 100 * i), (800, 100 * i), 2)
+            pygame.draw.line(screen, darkest_purple, (100 * i, 0), (100 * i, 800), 2)
 
-    pygame.draw.rect(screen, 'gray', [0, 800, WIDTH, 100])
-    pygame.draw.rect(screen, 'gray', [800, 0, 200, HEIGHT])
-    pygame.draw.rect(screen, 'gold', [0, 800, WIDTH, 100], 5)
-    pygame.draw.rect(screen, 'gold', [800, 0, 200, HEIGHT], 5)
-    status_text = ['White: Select a Piece to Move!', 'White: Select a Destination!',
-                    'Black: Select a Piece to Move!', 'Black: Select a Destination!']
+    pygame.draw.rect(screen, light_purple, [0, 800, WIDTH, 100])
+    pygame.draw.rect(screen, light_purple, [800, 0, 200, HEIGHT])
+    pygame.draw.rect(screen, darkest_purple, [0, 800, WIDTH, 100], 4)
+    pygame.draw.rect(screen, darkest_purple, [800, 0, 200, HEIGHT], 4)
+    status_text = ['White to Move', 'White: Select a square',
+                    'Black to Move', 'Black: Select a square']
     
     screen.blit(big_font.render(status_text[turn_step], True, 'black'), (20, 820))
     #forefeit button
-    screen.blit(medium_font.render('FOREFEIT', True, 'black'), (812, 830))
+    screen.blit(medium_font.render('Resign', True, 'black'), (812, 830))
 
 #draw the pieces
 def draw_pieces():
@@ -127,7 +136,7 @@ def draw_pieces():
         #selection highlight
         if turn_step < 2:
             if  selection == i:
-                pygame.draw.rect(screen, 'red', [white_location[i][0] * 100 + 1, white_location[i][1] * 100 + 1, 100, 100], 2)
+                pygame.draw.rect(screen, MOVE_DOT_COLOR, [white_location[i][0] * 100 + 1, white_location[i][1] * 100 + 1, 100, 100], 3)
 
     for i in range(len(black_pieces)):
         index = piece_list.index(black_pieces[i])
@@ -138,7 +147,7 @@ def draw_pieces():
         #selection highlight
         if turn_step >= 2:
             if selection == i:
-                pygame.draw.rect(screen, 'red', [black_location[i][0] * 100 + 1, black_location[i][1] * 100 + 1, 100, 100], 2)
+                pygame.draw.rect(screen, MOVE_DOT_COLOR, [black_location[i][0] * 100 + 1, black_location[i][1] * 100 + 1, 100, 100], 3)
 
 #check function
 def check_options(pieces, locations, turn):
@@ -330,7 +339,7 @@ def check_valid_moves():
 #drawe valid moves on screen
 def draw_valid(moves):
     for i in range(len(moves)):
-        pygame.draw.circle(screen, 'red', (moves[i][0] * 100 + 50, moves[i][1] * 100 + 50), 5)
+        pygame.draw.circle(screen, MOVE_DOT_COLOR, (moves[i][0] * 100 + 50, moves[i][1] * 100 + 50), 5)
 
 #draw captured pieces
 def draw_captured_pieces():
@@ -382,7 +391,7 @@ while run:
         counter += 1
     else:
         counter = 0
-    screen.fill('dark grey')
+    screen.fill('light grey')
     draw_board()
     draw_pieces()
     draw_captured_pieces()
